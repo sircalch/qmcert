@@ -1,0 +1,25 @@
+{
+  "title": "QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations",
+  "description": "An open-source scientific toolkit for rigorous quality assurance, stationary point certification (0 imaginary frequencies for local minima, exactly 1 for transition states), spin contamination analysis, SCF/geometry convergence auditing, quasi-harmonic thermochemistry corrections, and manuscript-ready reporting for quantum-chemical calculations.",
+  "creators": [
+    {
+      "name": "Monreal-Hernández, Andre",
+      "affiliation": "Doctoral Research Group"
+    }
+  ],
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "quantum chemistry",
+    "DFT",
+    "ORCA",
+    "Gaussian",
+    "imaginary frequencies",
+    "transition state",
+    "spin contamination",
+    "Grimme quasi-RRHO",
+    "computational chemistry",
+    "scientific software"
+  ],
+  "upload_type": "software"
+}

@@ -1,0 +1,71 @@
+"""
+Generates sample ORCA and Gaussian calculation log files for testing and tutorials.
+"""
+
+import os
+
+
+def generate_sample_orca_output(filepath: str = "sample_orca_calc.out"):
+    content = """
+  ************************************************************
+  *                        * O   R   C   A *                  *
+  *                                                           *
+  *                   Program Version 5.0.4                   *
+  ************************************************************
+
+| 1> ! B3LYP def2-TZVP D3BJ CPCM(Water) Opt Freq
+
+Total Charge           Charge          ....    0
+Multiplicity           Mult            ....    1
+Number of Atoms        Atoms           ....    6
+
+----------------------------------
+GEOMETRY OPTIMIZATION CYCLE   4
+----------------------------------
+FINAL SINGLE POINT ENERGY      -154.28549102
+
+                   *** THE OPTIMIZATION HAS CONVERGED ***
+
+---------------------------------
+SCF CONVERGED AFTER  12 ITERATIONS
+---------------------------------
+
+-----------------------
+VIBRATIONAL FREQUENCIES
+-----------------------
+   0:         0.00 cm**-1
+   1:         0.00 cm**-1
+   2:         0.00 cm**-1
+   3:         0.00 cm**-1
+   4:         0.00 cm**-1
+   5:         0.00 cm**-1
+   6:       155.40 cm**-1
+   7:       450.20 cm**-1
+   8:       890.15 cm**-1
+   9:      1250.80 cm**-1
+  10:      1620.40 cm**-1
+  11:      3050.25 cm**-1
+
+-----------
+IR SPECTRUM
+-----------
+   6:      155.40 cm**-1     15.20 km/mol
+   7:      450.20 cm**-1     35.40 km/mol
+   8:      890.15 cm**-1     60.10 km/mol
+   9:     1250.80 cm**-1    110.50 km/mol
+  10:     1620.40 cm**-1    280.00 km/mol
+  11:     3050.25 cm**-1    145.20 km/mol
+
+Zero point energy                ...      0.08250000 Eh
+Total Enthalpy                   ...   -154.20299102 Eh
+Final Gibbs free energy          ...   -154.23845012 Eh
+Final entropy term               ...      0.03545910 Eh
+Temperature                      ...      298.15 K
+"""
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(content)
+    print(f"Sample ORCA output written to: {os.path.abspath(filepath)}")
+
+
+if __name__ == "__main__":
+    generate_sample_orca_output()
