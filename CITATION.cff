@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+﻿cff-version: 1.2.0
 message: "If you use QMCert in your research to validate quantum chemistry calculations, certify stationary points, or assess spin contamination, please cite it as below."
 authors:
   - family-names: "Monreal-Hernández"
@@ -7,8 +7,8 @@ authors:
 title: "QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations"
 version: 1.0.0
 date-released: 2026-08-31
-url: "https://github.com/amonreal/qmcert"
-repository-code: "https://github.com/amonreal/qmcert"
+url: "https://github.com/sircalch/qmcert"
+repository-code: "https://github.com/sircalch/qmcert"
 keywords:
   - "quantum chemistry"
   - "DFT"
@@ -21,3 +21,4 @@ keywords:
   - "thermochemistry"
   - "reproducibility"
 license: MIT
+

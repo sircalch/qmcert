@@ -1,6 +1,6 @@
-# QMCert
+﻿# QMCert
 
-[![CI](https://github.com/amonreal/qmcert/actions/workflows/test.yml/badge.svg)](https://github.com/amonreal/qmcert/actions)
+[![CI](https://github.com/sircalch/qmcert/actions/workflows/test.yml/badge.svg)](https://github.com/sircalch/qmcert/actions)
 [![PyPI version](https://img.shields.io/pypi/v/qmcert.svg?color=blue)](https://pypi.org/project/qmcert/)
 [![Python versions](https://img.shields.io/pypi/pyversions/qmcert.svg)](https://pypi.org/project/qmcert/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -68,7 +68,7 @@ pip install qmcert
 
 ### From Source
 ```bash
-git clone https://github.com/amonreal/qmcert.git
+git clone https://github.com/sircalch/qmcert.git
 cd qmcert
 pip install -e .[dev]
 ```
@@ -138,7 +138,7 @@ If you use QMCert to validate quantum-chemical calculations, certify stationary 
   year = {2026},
   version = {1.0.0},
   publisher = {Zenodo},
-  url = {https://github.com/amonreal/qmcert}
+  url = {https://github.com/sircalch/qmcert}
 }
 ```
 
@@ -147,3 +147,4 @@ If you use QMCert to validate quantum-chemical calculations, certify stationary 
 ## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
