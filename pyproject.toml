@@ -8,9 +8,7 @@ version = "1.0.0"
 description = "Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations"
 readme = "README.md"
 authors = [
-    { name = "Andrés Monreal-Hernández", email = "andres.monreal@ues.mx" },
-    { name = "Sara Lizbeth Franco-Amaya" },
-    { name = "Carlos Ivanhoe Martínez-Osorio" }
+    { name = "Andrés Monreal-Hernández", email = "andres.monreal@ues.mx" }
 ]
 license = { text = "MIT" }
 keywords = [
