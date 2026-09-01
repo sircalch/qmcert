@@ -66,3 +66,7 @@ Documentation = "https://github.com/amonreal/qmcert#readme"
 Repository = "https://github.com/amonreal/qmcert.git"
 "Bug Tracker" = "https://github.com/amonreal/qmcert/issues"
 Changelog = "https://github.com/amonreal/qmcert/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+include = ["qmcert*"]
+
