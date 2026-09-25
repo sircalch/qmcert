@@ -40,8 +40,8 @@ def run_demo(output_dir: str = "qmcert_demo_output"):
     os.makedirs(output_dir, exist_ok=True)
     
     metadata = {
-        "engine": "ORCA",
-        "version": "6.0.0",
+        "engine": "SYNTHETIC DEMO DATA (ORCA-like output; not a real calculation)",
+        "version": "",
         "functional": "wB97X-D3BJ",
         "basis_set": "def2-TZVP",
         "dispersion": "D3BJ",
