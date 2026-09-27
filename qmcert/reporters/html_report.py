@@ -336,7 +336,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
 
         <footer>
-            Generated automatically by <strong>QMCert v1.0.0</strong> &bull; Quantum Chemistry Certification & Reproducibility Toolkit &bull; Monreal-Hernández, 2026.
+            Generated automatically by <strong>QMCert v1.1.0</strong> &bull; Quantum Chemistry Certification & Reproducibility Toolkit &bull; Monreal-Hernández, 2026.
         </footer>
     </div>
 

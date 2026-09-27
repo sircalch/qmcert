@@ -1,0 +1,5 @@
+# keep inputs (.inp) and outputs (.out); ignore ORCA scratch and binary files
+*
+!.gitignore
+!*.inp
+!*.out

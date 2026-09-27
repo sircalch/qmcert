@@ -74,32 +74,30 @@ def parse_orca_output(filepath: str) -> Dict[str, Any]:
     if mult_match:
         metadata["multiplicity"] = int(mult_match.group(1))
 
-    # 4. SCF Convergence
+    # 4. SCF Convergence (last SCF run of the job)
     scf_converged = bool("SUCCESSFULLY CONVERGED" in content or "SCF CONVERGED AFTER" in content or "SCF converged" in content)
+    if "SCF NOT CONVERGED" in content.upper():
+        scf_converged = False
     scf_cycles = 1
-    cycle_matches = re.findall(r"SCF iterations\s*\.\.\.\.\s*(\d+)", content)
-    if cycle_matches:
-        scf_cycles = int(cycle_matches[-1])
+    conv_cycles = re.findall(r"SCF CONVERGED AFTER\s+(\d+)\s+CYCLES", content)
+    if conv_cycles:
+        scf_cycles = int(conv_cycles[-1])
     else:
-        cycle_matches2 = re.findall(r"Iteration\s+(\d+)\s+:", content)
-        if cycle_matches2:
-            scf_cycles = int(cycle_matches2[-1])
+        cycle_matches = re.findall(r"SCF iterations\s*\.\.\.\.\s*(\d+)", content)
+        if cycle_matches:
+            scf_cycles = int(cycle_matches[-1])
 
     # 5. Geometry Optimization Convergence
     is_opt = bool("GEOMETRY OPTIMIZATION CYCLE" in content or "OPTIMIZATION RUN" in content)
     opt_converged = None
     n_opt_steps = None
     opt_energies = []
-    
+
     if is_opt:
-        opt_converged = bool(
-            "*** THE OPTIMIZATION HAS CONVERGED ***" in content or
-            "HURRAY - THE OPTIMIZATION HAS CONVERGED" in content
-        )
+        # ORCA prints "***   THE OPTIMIZATION HAS CONVERGED   ***" with version-dependent spacing
+        opt_converged = bool(re.search(r"THE OPTIMIZATION HAS CONVERGED", content))
         step_matches = re.findall(r"GEOMETRY OPTIMIZATION CYCLE\s+(\d+)", content)
         n_opt_steps = int(step_matches[-1]) if step_matches else 1
-        
-        # Extract energy trajectory
         e_matches = re.findall(r"FINAL SINGLE POINT ENERGY\s+([\-\d\.]+)", content)
         if e_matches:
             opt_energies = [float(e) for e in e_matches]
@@ -110,67 +108,71 @@ def parse_orca_output(filepath: str) -> Dict[str, Any]:
     if final_e_match:
         final_e = float(final_e_match[-1])
 
-    # 6. Vibrational Frequencies & IR Intensities
+    # 6. Vibrational Frequencies & IR Intensities (last frequency calculation in the file).
+    # Block layout:  VIBRATIONAL FREQUENCIES / ---- / (blank) / Scaling factor ... / (blank) /
+    #                "     6:    -830.27 cm**-1  ***imaginary mode***"
+    # Exactly-zero entries are the projected translations/rotations and are excluded.
     frequencies: List[float] = []
     intensities: List[float] = []
-    
-    # Check for VIBRATIONAL FREQUENCIES block
-    freq_block_match = re.search(r"VIBRATIONAL FREQUENCIES\s*[-]+\s*(.*?)(?:\n\s*\n|NORMAL MODES)", content, re.DOTALL)
-    if freq_block_match:
-        lines = freq_block_match.group(1).strip().splitlines()
-        for l in lines:
-            parts = l.strip().split()
-            if len(parts) >= 2 and parts[0].replace(":", "").isdigit():
-                try:
-                    val = float(parts[1])
-                    frequencies.append(val)
-                except ValueError:
-                    pass
+    freq_modes: List[int] = []
+    freq_blocks = re.split(r"VIBRATIONAL FREQUENCIES\s*\n-+\s*\n", content)
+    if len(freq_blocks) > 1:
+        body = re.split(r"NORMAL MODES|IR SPECTRUM", freq_blocks[-1])[0]
+        freq_modes: List[int] = []
+        for mode, val in re.findall(r"^\s*(\d+):\s+(-?\d+\.\d+)\s+cm\*\*-1", body, re.M):
+            f_val = float(val)
+            if abs(f_val) > 1e-6:
+                frequencies.append(f_val)
+                freq_modes.append(int(mode))
 
-    # Check for IR SPECTRUM block (intensities)
-    ir_block_match = re.search(r"IR SPECTRUM\s*[-]+\s*(.*?)(?:\n\s*\n|The epsilon)", content, re.DOTALL)
-    if ir_block_match:
-        lines = ir_block_match.group(1).strip().splitlines()
-        for l in lines:
-            parts = l.strip().split()
-            if len(parts) >= 3 and parts[0].replace(":", "").isdigit():
-                try:
-                    freq_val = float(parts[1])
-                    t2_int = float(parts[2])
-                    intensities.append(t2_int)
-                except ValueError:
-                    pass
+    # IR intensities in km/mol, read by column name from the header of the last IR SPECTRUM block
+    ir_blocks = re.split(r"IR SPECTRUM\s*\n-+\s*\n", content)
+    if len(ir_blocks) > 1:
+        body = ir_blocks[-1].split("* The epsilon")[0]
+        header = next((ln for ln in body.splitlines() if "Mode" in ln and "freq" in ln), "")
+        cols = header.split()
+        int_col = cols.index("Int") if "Int" in cols else (cols.index("T**2") if "T**2" in cols else None)
+        if int_col is not None:
+            int_by_mode: Dict[int, float] = {}
+            for ln in body.splitlines():
+                parts = ln.replace("(", " ").replace(")", " ").split()
+                if len(parts) > int_col and parts[0].rstrip(":").isdigit():
+                    try:
+                        int_by_mode[int(parts[0].rstrip(":"))] = float(parts[int_col])
+                    except ValueError:
+                        pass
+            # ORCA omits imaginary modes from the IR table: align by mode number (0.0 when absent)
+            if frequencies and int_by_mode:
+                intensities = [int_by_mode.get(m, 0.0) for m in freq_modes]
 
-    # 7. Spin expectation values <S^2>
+    # 7. Spin expectation value <S^2> of the final SCF
     s2_calc = None
-    s2_match = re.search(r"Expectation value of <S\*\*2>\s*:\s*([\d\.]+)", content)
-    if s2_match:
-        s2_calc = float(s2_match.group(1))
+    s2_all = re.findall(r"Expectation value of <S\*\*2>\s*:\s*([\d\.]+)", content)
+    if s2_all:
+        s2_calc = float(s2_all[-1])
 
-    # 8. Frontier Orbitals (HOMO / LUMO)
+    # 8. Frontier orbitals from the last ORBITAL ENERGIES section
+    # (restricted: one table; unrestricted: SPIN UP / SPIN DOWN tables). Columns: NO OCC E(Eh) E(eV)
     homo_ev = None
     lumo_ev = None
-    # ORCA orbital block: "NO   OCC          E(Eh)            E(eV)"
-    orb_matches = re.findall(r"\s*(\d+)\s+([\d\.]+)\s+([\-\d\.]+)\s+([\-\d\.]+)", content)
-    if orb_matches:
-        last_occ_ev = None
-        first_unocc_ev = None
-        for idx_s, occ_s, eh_s, ev_s in orb_matches:
-            try:
-                occ = float(occ_s)
-                ev = float(ev_s)
-                if occ > 0.0:
-                    last_occ_ev = ev
-                elif occ == 0.0 and first_unocc_ev is None:
-                    first_unocc_ev = ev
-            except ValueError:
-                pass
-        homo_ev = last_occ_ev
-        lumo_ev = first_unocc_ev
+    if "ORBITAL ENERGIES" in content:
+        orb_section = content.rsplit("ORBITAL ENERGIES", 1)[1]
+        orb_section = re.split(r"MULLIKEN|LOEWDIN|\*{5,}", orb_section)[0]
+        tables = re.split(r"SPIN (?:UP|DOWN) ORBITALS", orb_section)
+        tables = tables[1:] if len(tables) > 1 else [orb_section]
+        occ_levels, vir_levels = [], []
+        for table in tables:
+            for occ_s, ev_s in re.findall(r"^\s*\d+\s+(\d+\.\d+)\s+-?\d+\.\d+\s+(-?\d+\.\d+)\s*$", table, re.M):
+                (occ_levels if float(occ_s) > 0.5 else vir_levels).append(float(ev_s))
+        if occ_levels:
+            homo_ev = max(occ_levels)
+        if vir_levels:
+            lumo_ev = min(vir_levels)
 
     # 9. Thermochemistry
     thermo_data = None
     zpve_match = re.search(r"Zero point energy\s*\.\.\.\s*([\-\d\.]+)\s*Eh", content)
+    thermal_match = re.findall(r"Total thermal energy\s*(?:\.\.\.)?\s*([\-\d\.]+)\s*Eh", content)
     enthalpy_match = re.search(r"Total Enthalpy\s*\.\.\.\s*([\-\d\.]+)\s*Eh", content)
     gibbs_match = re.search(r"Final Gibbs free energy\s*\.\.\.\s*([\-\d\.]+)\s*Eh", content)
     entropy_match = re.search(r"Final entropy term\s*\.\.\.\s*([\-\d\.]+)\s*Eh", content)
@@ -190,7 +192,7 @@ def parse_orca_output(filepath: str) -> Dict[str, Any]:
             temperature_k=temp,
             pressure_atm=1.0,
             zpve_hartree=zpve,
-            thermal_energy_hartree=h_val,
+            thermal_energy_hartree=float(thermal_match[-1]) if thermal_match else h_val,
             enthalpy_hartree=h_val,
             gibbs_free_energy_hartree=g_val,
             entropy_cal_mol_k=s_val,

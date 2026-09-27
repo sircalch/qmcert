@@ -159,7 +159,7 @@ def assess_qm_quality(
         recommendations=recommendations,
         provenance={
             "tool": "QMCert",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "citation": "Monreal-Hernández, A. (2026). QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations."
         }
     )

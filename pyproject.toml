@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qmcert"
-version = "1.0.0"
+version = "1.1.0"
 description = "Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations"
 readme = "README.md"
 authors = [

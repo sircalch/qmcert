@@ -207,13 +207,13 @@ def print_citation():
   author = {Monreal-Hern\\'andez, Andre},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.0.0},
+  version = {1.1.0},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/qmcert}
 }"""
     print("\nIf you use QMCert in your publications, please cite:\n")
     print("APA Style:")
-    print("Monreal-Hernández, A. (2026). QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations (v1.0.0). Zenodo. https://github.com/sircalch/qmcert\n")
+    print("Monreal-Hernández, A. (2026). QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations (v1.1.0). Zenodo. https://github.com/sircalch/qmcert\n")
     print("BibTeX:")
     print(bib)
     print()

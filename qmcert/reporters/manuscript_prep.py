@@ -113,7 +113,7 @@ def generate_qm_manuscript_assets(
 
     full_methods = (
         f"All quantum-chemical calculations were performed using {engine_str} at the {func_str}/{basis_str} level of theory{disp_str}{solv_str}. "
-        f"Calculation quality, SCF convergence, and wavefunction consistency were systematically verified using QMCert v1.0.0 (Monreal-Hernández, 2026). "
+        f"Calculation quality, SCF convergence, and wavefunction consistency were systematically verified using QMCert v1.1.0 (Monreal-Hernández, 2026). "
         f"{freq_sentence}{spin_sentence}{qrrho_sentence}"
         f"Overall computational reproducibility was validated with status: {report.overall_status}."
     )
@@ -128,7 +128,7 @@ def generate_qm_manuscript_assets(
   author = {Monreal-Hern\\'andez, Andre},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.0.0},
+  version = {1.1.0},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/qmcert}
 }

@@ -62,7 +62,7 @@ Final Gibbs free energy          ...   -154.18000000 Eh
         assert data["metadata"]["functional"] == "B3LYP"
         assert data["metadata"]["dispersion"] == "D3BJ"
         assert data["scf_converged"] is True
-        assert len(data["frequencies"]) == 10
+        assert len(data["frequencies"]) == 4  # translations/rotations (0.00 cm**-1) are excluded
         assert data["thermochemistry"] is not None
         assert data["thermochemistry"].zpve_hartree == 0.085
         
