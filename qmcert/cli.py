@@ -1,4 +1,4 @@
-﻿"""
+"""
 Command Line Interface (CLI) for QMCert.
 """
 
@@ -72,7 +72,8 @@ def run_demo(output_dir: str = "qmcert_demo_output"):
         gibbs_free_energy_hartree=-425.87520,
         entropy_cal_mol_k=117.21,
         quasi_rrho_gibbs_hartree=None,
-        quasi_rrho_entropy_cal_mol_k=None
+        quasi_rrho_entropy_cal_mol_k=None,
+        quasi_rrho_applied_by_program=False
     )
     
     energies_traj = [-425.95000, -425.98500, -426.00200, -426.00510, -426.00565]
@@ -129,7 +130,8 @@ def run_demo(output_dir: str = "qmcert_demo_output"):
         print(f" * HOMO-LUMO Gap    : {report.orbital_result['gap_ev']:.2f} eV | Status: {report.orbital_result['status']}")
     if report.quasi_rrho_correction:
         qr = report.quasi_rrho_correction
-        print(f" * Quasi-RRHO DeltaG: {qr['delta_g_quasi_rrho_hartree']*627.509:.3f} kcal/mol ({qr['n_low_freq_modes']} low modes)")
+        note = "already in the program's G" if qr.get("applied_by_program") else "added to the harmonic G"
+        print(f" * Quasi-RRHO DeltaG: {qr['delta_g_quasi_rrho_hartree']*627.509:.3f} kcal/mol ({qr['n_low_freq_modes']} low modes; {note})")
     print("="*70)
     print(f"\nAll outputs successfully saved to: {os.path.abspath(output_dir)}/")
     print(f"Open {os.path.abspath(html_p)} in your browser to inspect the full report.\n")
@@ -213,7 +215,7 @@ def print_citation():
 }"""
     print("\nIf you use QMCert in your publications, please cite:\n")
     print("APA Style:")
-    print("Monreal-Hernández, A. (2026). QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations (v1.1.0). Zenodo. https://github.com/sircalch/qmcert\n")
+    print(f"Monreal-Hernández, A. (2026). QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations (v{__import__('qmcert').__version__}). Zenodo. https://github.com/sircalch/qmcert\n")
     print("BibTeX:")
     print(bib)
     print()

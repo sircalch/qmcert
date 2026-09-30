@@ -18,6 +18,9 @@ class ThermochemistryData:
     entropy_cal_mol_k: float
     quasi_rrho_gibbs_hartree: Optional[float]
     quasi_rrho_entropy_cal_mol_k: Optional[float]
+    # True when the program already applied a quasi-RRHO entropy (ORCA 6 by default): the Gibbs
+    # free energy above is then the quasi-RRHO value and no further correction must be added.
+    quasi_rrho_applied_by_program: bool = False
 
 
 def calculate_quasi_rrho_corrections(

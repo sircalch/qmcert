@@ -1,4 +1,4 @@
-﻿# QMCert
+# QMCert
 
 [![CI](https://github.com/sircalch/qmcert/actions/workflows/test.yml/badge.svg)](https://github.com/sircalch/qmcert/actions)
 [![PyPI version](https://img.shields.io/pypi/v/qmcert.svg?color=blue)](https://pypi.org/project/qmcert/)
@@ -6,32 +6,24 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22217572.svg)](https://doi.org/10.5281/zenodo.22217572)
 
-> **Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations.**
+> **Quality checks for quantum-chemical calculations: convergence, stationary points, spin contamination and quasi-RRHO free energies.**
 
 ---
 
 ## Overview
 
-**QMCert** is an open-source scientific toolkit designed to systematically audit, validate, and certify electronic structure calculations (**DFT, HF, post-HF, semiempirical**) from **ORCA**, **Gaussian**, **Q-Chem**, and **NWChem**.
+**QMCert** is an open-source Python package that reads the output of a quantum-chemistry calculation and checks what should be checked before its energies are used: convergence, the nature of the stationary point, spin contamination and the treatment of low-frequency modes in free energies. The ORCA parser was validated on 59 real ORCA 6.1 outputs against cclib, GoodVibes and ORCA's own printout (`validation/`); a Gaussian parser is included but has not been validated on real outputs.
 
-Instead of manually inspecting log files to ensure calculations are publication-ready, `qmcert` performs a comprehensive automated audit with a single command:
+- **Convergence**: outcome of the last SCF in the file; the optimiser's convergence banner.
+- **Stationary point**: imaginary frequencies below -10 cm^-1 are counted; a minimum needs none, a transition state exactly one; two or more is a higher-order saddle point. A converged optimisation is not taken as evidence of a minimum.
+- **Spin contamination**: deviation of <S^2> from S(S+1), as a percentage of S(S+1) (warning above 5%, failure above 10%).
+- **Thermochemistry**: ZPE, H, G and S as printed by the program, and Grimme's quasi-RRHO vibrational entropy (omega_0 = 100 cm^-1). ORCA 6.1 applies quasi-RRHO by default (its output says so); QMCert reads that setting and reports the harmonic and quasi-RRHO free energies explicitly, so the correction is never applied twice.
+- **IR spectrum**: Lorentzian broadening of the computed intensities.
 
-- 🎯 **Stationary Point Certification**:
-  - Automatically identifies imaginary frequencies ($\nu < 0\text{ cm}^{-1}$).
-  - Validates **Local Minima** (0 imaginary modes) vs **Transition States** (exactly 1 imaginary mode).
-  - Flags unphysical saddle points with clear diagnostic messages.
-- 🔄 **Wavefunction & Spin Contamination ($\langle S^2 \rangle$)**:
-  - Audits expectation values $\langle S^2 \rangle_{\text{calc}}$ vs exact theoretical $S(S+1)$.
-  - Calculates spin contamination percentage and triggers alerts if $> 5.0\%$.
-- ⚡ **SCF & Geometry Convergence Verification**:
-  - Checks 4 standard convergence thresholds (Energy change, Max/RMS gradients, Max/RMS displacements).
-- 🌡️ **Advanced Thermochemistry & Quasi-Harmonic Corrections**:
-  - Extracts ZPVE, thermal enthalpy $H(T)$, Gibbs free energy $G(T)$, and entropy $S(T)$.
-  - Applies **Grimme's quasi-RRHO harmonic entropy correction** to prevent rotational/vibrational divergence for low-frequency modes ($\nu < 100\text{ cm}^{-1}$).
-- 🌈 **Simulated IR Vibrational Spectra**:
-  - Lorentzian line-broadening with peak identification.
-- 🚦 **Quantum Chemistry Validation Score (`PASS` / `WARNING` / `FAIL`)**.
-- 📑 **Publication Deliverables**: Interactive self-contained `report.html`, publication vector plots (SVG/PDF/PNG 300 DPI), LaTeX summary tables (`.tex`), and a draft **Computational Details** Methods paragraph with automated **BibTeX citations**.
+> **Version 1.2.0** fixes a reporting defect found by the validation: version 1.1.0 reported a separate quasi-RRHO correction on top of ORCA's free energy, which already contained it (up to 0.73 kcal/mol in the benchmark). See the CHANGELOG.
+
+- **Verdicts**: `PASS` / `WARNING` / `FAIL` for each check; the overall status is the worst of them.
+- 📑 **Publication Deliverables**: Interactive self-contained `report.html`, publication vector plots (SVG/PDF/PNG 300 DPI), LaTeX summary tables (`.tex`), and a draft computational-details paragraph that states the results found, including failures.
 
 ```
   Quantum Chemical Output (.out, .log)
@@ -83,12 +75,12 @@ qmcert demo -o my_qm_validation/
 ```
 Open `my_qm_validation/report.html` in any browser to inspect the report and simulated IR spectrum!
 
-### 2. Assess ORCA / Gaussian Output File
+### 2. Assess an ORCA output file
 ```bash
 qmcert assess -i calculation.out -o qm_quality_report/
 ```
 
-### 3. Certify a Transition State (TS) Calculation
+### 3. Check a transition-state calculation
 ```bash
 qmcert assess -i ts_optimization.out --ts -o ts_report/
 ```
@@ -116,7 +108,7 @@ report = assess_qm_quality(
     thermochemistry=parsed_data["thermochemistry"]
 )
 
-print(f"Overall Certification: {report.overall_status}")
+print(f"Overall status: {report.overall_status}")
 print(f"Stationary Point: {report.frequency_result.point_type}")
 
 # 3. Export all publication assets
@@ -136,7 +128,7 @@ If you use QMCert to validate quantum-chemical calculations, certify stationary 
   author = {Monreal-Hern{\'a}ndez, Andre},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.0.0},
+  version = {1.2.0},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/qmcert}
 }

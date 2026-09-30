@@ -1,0 +1,25 @@
+\begin{tabular}{lllll}
+\toprule
+Calculation & intended & imaginary modes (cclib) & QMCert & QMCert verdict \\
+\midrule
+vinyl & minimum & 1 & 1 (transition state) & FAIL \\
+methylene triplet & minimum & 2 & 2 (higher order saddle point) & FAIL \\
+ammonia planar & transition state & 1 & 1 (transition state) & PASS \\
+water linear & saddle, index 2 & 2 & 2 (higher order saddle point) & FAIL \\
+ethane eclipsed & transition state & 1 & 1 (transition state) & PASS \\
+h2o2 trans planar & transition state & 1 & 1 (transition state) & PASS \\
+h2o2 cis planar & transition state & 1 & 1 (transition state) & PASS \\
+methanol eclipsed & transition state & 1 & 1 (transition state) & PASS \\
+biphenyl planar & transition state & 1 & 1 (transition state) & PASS \\
+butane syn & transition state & 0 & 0 (local minimum) & FAIL \\
+acetone truncated & not converged & -- & optimisation not converged & FAIL \\
+toluene truncated & not converged & -- & optimisation not converged & FAIL \\
+glycine truncated & not converged & -- & optimisation not converged & FAIL \\
+phenol scf truncated & not converged & -- & SCF not converged & FAIL \\
+pyridine scf truncated & not converged & -- & SCF not converged & FAIL \\
+vinyl bent & minimum & 0 & 0 (local minimum) & PASS \\
+methylene triplet bent & minimum & 0 & 0 (local minimum) & PASS \\
+allyl uhf & UHF doublet & -- & $\langle S^2\rangle$ = 0.965 & FAIL \\
+cyano uhf & UHF doublet & -- & $\langle S^2\rangle$ = 1.172 & FAIL \\
+\bottomrule
+\end{tabular}

@@ -54,3 +54,23 @@ def test_triplet_oxygen_single_point():
     assert d["frequencies"] is None
     assert d["opt_converged"] is None
     assert d["final_energy_hartree"] == pytest.approx(-150.145307, abs=1e-6)
+
+
+def test_quasi_rrho_is_not_added_twice_to_orca_free_energy():
+    from qmcert.core.scoring import assess_qm_quality
+    d = parse_orca_output(os.path.join(DATA, "acetone_min.out"))
+    th = d["thermochemistry"]
+    assert th.quasi_rrho_applied_by_program  # ORCA 6 prints "Quasi RRHO ... True"
+    rep = assess_qm_quality(d["metadata"], frequencies=d["frequencies"], thermochemistry=th)
+    qr = rep.quasi_rrho_correction
+    assert qr["n_low_freq_modes"] == 1
+    assert qr["gibbs_quasi_rrho_hartree"] == pytest.approx(th.gibbs_free_energy_hartree)
+    # the correction (about 0.54 kcal/mol here) is removed to obtain the harmonic value, not added again
+    assert (qr["gibbs_harmonic_hartree"] - th.gibbs_free_energy_hartree) * 627.509 == pytest.approx(-0.54, abs=0.01)
+    assert d["metadata"]["n_atoms"] == 10
+
+
+def test_scf_failure_is_detected():
+    d = parse_orca_output(os.path.join(DATA, "phenol_scf_not_converged.out"))
+    assert d["scf_converged"] is False
+    assert d["metadata"]["n_atoms"] == 13

@@ -67,7 +67,8 @@ def generate_qm_manuscript_assets(
         
     if report.quasi_rrho_correction:
         qr = report.quasi_rrho_correction
-        rows.append({"Parameter": "Grimme Quasi-RRHO Delta G", "Value": f"{qr['delta_g_quasi_rrho_hartree'] * 627.509:.3f} kcal/mol ({qr['n_low_freq_modes']} low modes)", "Status": "PASS"})
+        how = "already included in the program's G" if qr.get("applied_by_program") else "not included in the program's G"
+        rows.append({"Parameter": "Grimme quasi-RRHO correction to G", "Value": f"{qr['delta_g_quasi_rrho_hartree'] * 627.509:.3f} kcal/mol ({qr['n_low_freq_modes']} modes below 100 cm-1; {how})", "Status": "INFO"})
 
     df_summary = pd.DataFrame(rows)
     
@@ -97,25 +98,35 @@ def generate_qm_manuscript_assets(
     if report.frequency_result:
         fr = report.frequency_result
         if fr.n_imaginary == 0:
-            freq_sentence = f"Harmonic vibrational frequencies were calculated to confirm that optimized structures correspond to true local minima on the potential energy surface (0 imaginary frequencies, lowest mode = {fr.lowest_frequency:.1f} cm$^{{-1}}$). "
+            freq_sentence = f"Harmonic vibrational frequencies showed no imaginary mode (lowest mode = {fr.lowest_frequency:.1f} cm$^{{-1}}$), consistent with a local minimum. "
         elif fr.n_imaginary == 1:
-            freq_sentence = f"Harmonic vibrational analysis confirmed a first-order transition state with exactly one imaginary frequency (nu = {fr.imaginary_frequencies[0]:.1f} cm$^{{-1}}$). "
-            
+            freq_sentence = f"Harmonic vibrational analysis gave one imaginary frequency ({fr.imaginary_frequencies[0]:.1f} cm$^{{-1}}$), i.e. a first-order saddle point. "
+        else:
+            freq_sentence = f"Harmonic vibrational analysis gave {fr.n_imaginary} imaginary frequencies, i.e. a higher-order saddle point; the structure is neither a minimum nor a transition state. "
+        if fr.status != "PASS":
+            freq_sentence += f"This does not match the intended stationary point ({fr.expected_type.lower().replace('_', ' ')}). "
+
     spin_sentence = ""
     if report.spin_result and report.spin_result.multiplicity > 1:
         sr = report.spin_result
-        spin_sentence = f"Spin contamination was evaluated as negligible (<S^2> = {sr.s2_calculated:.4f}, deviation = {sr.contamination_pct:.2f}% relative to exact {sr.s2_exact:.4f}). "
-        
+        level = {"PASS": "small", "WARNING": "moderate", "FAIL": "large"}.get(sr.status, "")
+        spin_sentence = f"Spin contamination was {level} (<S^2> = {sr.s2_calculated:.4f} against the exact {sr.s2_exact:.4f}, a deviation of {sr.contamination_pct:.2f}%). "
+
     qrrho_sentence = ""
     if report.quasi_rrho_correction and report.quasi_rrho_correction["n_low_freq_modes"] > 0:
         qr = report.quasi_rrho_correction
-        qrrho_sentence = f"Thermal free energies were adjusted using Grimme's quasi-RRHO harmonic entropy correction for {qr['n_low_freq_modes']} low-frequency modes below 100 cm$^{{-1}}$. "
+        if qr.get("applied_by_program"):
+            qrrho_sentence = (f"The Gibbs free energy reported by the program includes Grimme's quasi-RRHO vibrational entropy "
+                              f"({qr['n_low_freq_modes']} modes below 100 cm$^{{-1}}$; correction {qr['delta_g_quasi_rrho_hartree'] * 627.509:.2f} kcal/mol relative to the harmonic value). ")
+        else:
+            qrrho_sentence = (f"Grimme's quasi-RRHO vibrational entropy was applied to {qr['n_low_freq_modes']} modes below 100 cm$^{{-1}}$ "
+                              f"(correction {qr['delta_g_quasi_rrho_hartree'] * 627.509:.2f} kcal/mol to the harmonic Gibbs free energy). ")
 
     full_methods = (
         f"All quantum-chemical calculations were performed using {engine_str} at the {func_str}/{basis_str} level of theory{disp_str}{solv_str}. "
-        f"Calculation quality, SCF convergence, and wavefunction consistency were systematically verified using QMCert v1.1.0 (Monreal-Hernández, 2026). "
+        f"Convergence, stationary points, spin contamination and thermochemistry were checked with QMCert v{__import__('qmcert').__version__} (Monreal-Hernández, 2026). "
         f"{freq_sentence}{spin_sentence}{qrrho_sentence}"
-        f"Overall computational reproducibility was validated with status: {report.overall_status}."
+        f"Overall QMCert status: {report.overall_status}."
     )
     
     with open(methods_path, "w", encoding="utf-8") as f:

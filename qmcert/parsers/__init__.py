@@ -1,5 +1,5 @@
 """
-Parsers for quantum chemical calculation output files (ORCA, Gaussian, Q-Chem).
+Parsers for quantum chemical calculation output files (ORCA; Gaussian, not validated on real outputs).
 """
 
 from qmcert.parsers.generic_qm import parse_qm_output

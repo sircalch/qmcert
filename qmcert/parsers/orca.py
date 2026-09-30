@@ -74,10 +74,19 @@ def parse_orca_output(filepath: str) -> Dict[str, Any]:
     if mult_match:
         metadata["multiplicity"] = int(mult_match.group(1))
 
+    n_at = re.findall(r"Number of atoms\s*\.+\s*(\d+)", content)
+    if n_at:
+        metadata["n_atoms"] = int(n_at[-1])
+
     # 4. SCF Convergence (last SCF run of the job)
-    scf_converged = bool("SUCCESSFULLY CONVERGED" in content or "SCF CONVERGED AFTER" in content or "SCF converged" in content)
-    if "SCF NOT CONVERGED" in content.upper():
-        scf_converged = False
+    # The outcome of the last SCF in the file decides: an optimisation contains many SCF runs, and an
+    # early failure followed by later successes (or the reverse) must not be read from the whole file.
+    outcomes = [(m.start(), True) for m in re.finditer(r"SCF CONVERGED AFTER\s+\d+\s+CYCLES", content)]
+    outcomes += [(m.start(), False) for m in re.finditer(r"SCF NOT CONVERGED", content, re.IGNORECASE)]
+    if outcomes:
+        scf_converged = max(outcomes)[1]
+    else:
+        scf_converged = bool("SUCCESSFULLY CONVERGED" in content)
     scf_cycles = 1
     conv_cycles = re.findall(r"SCF CONVERGED AFTER\s+(\d+)\s+CYCLES", content)
     if conv_cycles:
@@ -177,6 +186,10 @@ def parse_orca_output(filepath: str) -> Dict[str, Any]:
     gibbs_match = re.search(r"Final Gibbs free energy\s*\.\.\.\s*([\-\d\.]+)\s*Eh", content)
     entropy_match = re.search(r"Final entropy term\s*\.\.\.\s*([\-\d\.]+)\s*Eh", content)
     temp_match = re.search(r"Temperature\s*\.\.\.\s*([\d\.]+)\s*K", content)
+    # ORCA 6 applies Grimme's quasi-RRHO entropy by default and prints "Quasi RRHO ... True"; the printed
+    # Gibbs free energy then already contains the correction.
+    qrrho_flag = re.findall(r"Quasi RRHO\s*\.\.\.\s*(True|False)", content)
+    qrrho_by_program = bool(qrrho_flag) and qrrho_flag[-1] == "True"
     
     if zpve_match and gibbs_match:
         temp = float(temp_match.group(1)) if temp_match else 298.15
@@ -196,8 +209,9 @@ def parse_orca_output(filepath: str) -> Dict[str, Any]:
             enthalpy_hartree=h_val,
             gibbs_free_energy_hartree=g_val,
             entropy_cal_mol_k=s_val,
-            quasi_rrho_gibbs_hartree=None,
-            quasi_rrho_entropy_cal_mol_k=None
+            quasi_rrho_gibbs_hartree=g_val if qrrho_by_program else None,
+            quasi_rrho_entropy_cal_mol_k=s_val if qrrho_by_program else None,
+            quasi_rrho_applied_by_program=qrrho_by_program
         )
 
     return {

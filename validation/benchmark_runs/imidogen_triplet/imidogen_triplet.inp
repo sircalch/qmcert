@@ -1,0 +1,5 @@
+! UKS B3LYP D3BJ def2-SVP TightSCF Opt Freq
+* xyz 0 3
+N      0.509500     0.000000     0.000000
+H     -0.509500     0.000000     0.000000
+*

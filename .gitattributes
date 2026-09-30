@@ -1,0 +1,3 @@
+validation/benchmark_runs/**/*.out -text
+validation/benchmark_runs/**/*.inp -text
+validation/benchmark_runs/**/*.xyz -text

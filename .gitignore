@@ -50,3 +50,16 @@ ENV/
 qmcert_output/
 qmcert_demo_output/
 *.log
+
+# validation: keep ORCA inputs, outputs and final geometries only
+validation/benchmark_runs/**/*.gbw
+validation/benchmark_runs/**/*.densities
+validation/benchmark_runs/**/*.densitiesinfo
+validation/benchmark_runs/**/*.hess
+validation/benchmark_runs/**/*.engrad
+validation/benchmark_runs/**/*.opt
+validation/benchmark_runs/**/*.bibtex
+validation/benchmark_runs/**/*.property.txt
+validation/benchmark_runs/**/*_trj.xyz
+validation/benchmark_runs/**/Goodvibes_output.dat
+validation/benchmark_runs/**/*.tmp

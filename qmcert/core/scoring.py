@@ -115,8 +115,18 @@ def assess_qm_quality(
         if freq_res.status != "PASS":
             recommendations.append(freq_res.diagnostic_message)
             
-        # Quasi-RRHO thermochemistry check
-        qrrho_res = calculate_quasi_rrho_corrections(frequencies)
+        # Quasi-RRHO (Grimme) correction. When the program has already applied it (ORCA 6 by
+        # default), its Gibbs free energy is the quasi-RRHO value and the harmonic value is recovered by
+        # removing the correction; otherwise the correction is added. It is never added twice.
+        temp = thermochemistry.temperature_k if thermochemistry is not None else 298.15
+        qrrho_res = calculate_quasi_rrho_corrections(frequencies, temperature=temp)
+        applied = bool(thermochemistry is not None and thermochemistry.quasi_rrho_applied_by_program)
+        qrrho_res["applied_by_program"] = applied
+        if thermochemistry is not None:
+            g = thermochemistry.gibbs_free_energy_hartree
+            dg = qrrho_res["delta_g_quasi_rrho_hartree"]
+            qrrho_res["gibbs_harmonic_hartree"] = g - dg if applied else g
+            qrrho_res["gibbs_quasi_rrho_hartree"] = g if applied else g + dg
 
     # 4. Spin Contamination Check (if open-shell / unrestricted)
     spin_res = None
@@ -137,13 +147,13 @@ def assess_qm_quality(
     # Overall Scoring Decision
     if "FAIL" in statuses:
         overall_status = "FAIL"
-        validation_score = "QUANTUM CHEMISTRY CERTIFICATION = REJECTED / INVALID"
+        validation_score = "QUANTUM CHEMISTRY CHECKS = AT LEAST ONE FAILED"
     elif "WARNING" in statuses:
         overall_status = "WARNING"
-        validation_score = "QUANTUM CHEMISTRY CERTIFICATION = ACCEPTABLE WITH WARNINGS"
+        validation_score = "QUANTUM CHEMISTRY CHECKS = PASSED WITH WARNINGS"
     else:
         overall_status = "PASS"
-        validation_score = "QUANTUM CHEMISTRY CERTIFICATION = FULLY CERTIFIED"
+        validation_score = "QUANTUM CHEMISTRY CHECKS = ALL PASSED"
 
     return QMCertValidationReport(
         overall_status=overall_status,
@@ -159,7 +169,7 @@ def assess_qm_quality(
         recommendations=recommendations,
         provenance={
             "tool": "QMCert",
-            "version": "1.1.0",
+            "version": __import__("qmcert").__version__,
             "citation": "Monreal-Hernández, A. (2026). QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations."
         }
     )
