@@ -135,7 +135,7 @@ def table_s_all(d):
              r"Calculation & set & atoms & imag.\ & $\langle S^2\rangle$ & $\Delta G_{\mathrm{qRRHO}}$ & overall \\", r"\midrule"]
     for r in d.itertuples():
         s2 = f"{r.qm_s2:.4f}" if pd.notna(r.qm_s2) else "--"
-        dg = f"{r.qm_qrrho_dg * KCAL:.3f}" if pd.notna(r.qm_qrrho_dg) else "--"
+        dg = f"{r.qm_qrrho_dg * KCAL:.3f}".replace("-0.000", "0.000") if pd.notna(r.qm_qrrho_dg) else "--"
         ni = f"{int(r.qm_nimag)}" if pd.notna(r.qm_nimag) else "--"
         lines.append(f"{r.name.replace('_', ' ')} & {SETNAME[r.set]} & {int(r.qm_natoms)} & {ni} & {s2} & {dg} & {r.qm_overall} " + r"\\")
     lines += [r"\bottomrule", r"\end{tabular}"]
