@@ -8,7 +8,7 @@ authors:
 title: "QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations"
 version: 1.2.0
 doi: 10.5281/zenodo.22217572
-date-released: 2026-08-31
+date-released: 2026-09-30
 url: "https://github.com/sircalch/qmcert"
 repository-code: "https://github.com/sircalch/qmcert"
 keywords:
