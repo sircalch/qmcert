@@ -125,14 +125,22 @@ If you use QMCert to validate quantum-chemical calculations, certify stationary 
 
 ```bibtex
 @software{monreal2026qmcert,
-  author = {Monreal-Hern{\'a}ndez, Andre},
+  author = {Monreal-Hern{\'a}ndez, Andr{\'e}s},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
   version = {1.2.0},
   publisher = {Zenodo},
+  doi = {10.5281/zenodo.22217572},
   url = {https://github.com/sircalch/qmcert}
 }
 ```
+
+The DOI above always resolves to the latest archived version. The repository's [`CITATION.cff`](CITATION.cff) is the canonical citation record; GitHub's "Cite this repository" button uses it.
+
+### Project page
+
+Release record and related tools: [qmcert on the author's site](https://sircalch.github.io/software/qmcert/) · [quality-control and reproducibility family](https://sircalch.github.io/software/quality-control/).
+
 
 ---
 
