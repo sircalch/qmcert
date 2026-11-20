@@ -27,7 +27,7 @@ FINAL SINGLE POINT ENERGY      -154.28549102
                    *** THE OPTIMIZATION HAS CONVERGED ***
 
 ---------------------------------
-SCF CONVERGED AFTER  12 ITERATIONS
+SCF CONVERGED AFTER  12 CYCLES
 ---------------------------------
 
 -----------------------
