@@ -206,10 +206,10 @@ def run_assess(args):
 
 def print_citation():
     bib = """@software{monreal2026qmcert,
-  author = {Monreal-Hern\\'andez, Andre},
+  author = {Monreal-Hernández, Andrés},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.1.0},
+  version = {""" + __version__ + """},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/qmcert}
 }"""

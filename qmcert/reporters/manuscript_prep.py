@@ -2,6 +2,7 @@
 Manuscript Methods text generator, LaTeX summary tables, and BibTeX citations for QMCert.
 """
 
+from qmcert import __version__
 from typing import Dict, Any
 import os
 import pandas as pd
@@ -136,10 +137,10 @@ def generate_qm_manuscript_assets(
     # 3. BibTeX Citation File
     bib_path = os.path.join(output_dir, "citation.bib")
     bib_content = """@software{monreal2026qmcert,
-  author = {Monreal-Hern\\'andez, Andre},
+  author = {Monreal-Hernández, Andrés},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.1.0},
+  version = {""" + __version__ + """},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/qmcert}
 }
