@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 (2026-11-19)
 
 ### Added
 - Documentation site with tutorials, an explanation of every check, validation results and API reference: <https://sircalch.github.io/qmcert/>.
@@ -8,6 +8,7 @@
 - Support and governance statement in `CONTRIBUTING.md`, linked from the README and the documentation.
 
 ### Fixed
+- Documentation: removed a stray line in the worked example.
 - The synthetic `sample_orca_calc.out` (and its generator `examples/generate_sample_outputs.py`) wrote `SCF CONVERGED AFTER 12 ITERATIONS`, which real ORCA never prints (it prints `CYCLES`), so `qmcert assess -i sample_orca_calc.out` reported a failed SCF. The sample now uses the real wording and is certified as expected.
 
 ## 1.2.0 (2026-09-30)

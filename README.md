@@ -136,7 +136,7 @@ If you use QMCert to validate quantum-chemical calculations, certify stationary 
   author = {Monreal-Hern{\'a}ndez, Andr{\'e}s},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   publisher = {Zenodo},
   doi = {10.5281/zenodo.22217572},
   url = {https://github.com/sircalch/qmcert}

@@ -21,7 +21,6 @@ phenol_scf_not_converged   MINIMUM           FAIL  -                          - 
 - **`h2o_min`, `acetone_min`:** closed-shell optimisations with a frequency calculation. All frequencies are real, so the structures are certified as local minima.
 - **`ch3_radical`:** a doublet methyl radical (UKS). \(\langle S^2\rangle = 0.754\) against the exact value \(S(S+1) = 0.75\), a contamination of 0.5 %, well below the 5 % warning limit.
 - **`o2_triplet`:** a triplet \(\mathrm{O_2}\) single-point calculation, with no optimisation or frequencies, so there is no stationary point to classify and only the SCF and the spin are checked. \(\langle S^2\rangle = 2.007\) against the exact 2.0 (0.3 % contamination).
-angle = 2.007\) against the exact 2.0 (0.3 % contamination).
 - **`nh3_planar_ts`:** the planar ammonia inversion saddle point. It has one imaginary frequency. It is certified as a transition state **because it was declared as one**.
 - **`phenol_scf_not_converged`:** a job whose SCF did not converge. It is a `FAIL`: with an unconverged wavefunction, nothing else in the output can be trusted.
 
