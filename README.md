@@ -119,6 +119,14 @@ generate_qm_html_report(report, "output_dir/report.html")
 
 ---
 
+## Documentation and help
+
+- Full documentation, tutorials and API reference: <https://sircalch.github.io/qmcert/>
+- Questions and bug reports: [issue tracker](https://github.com/sircalch/qmcert/issues)
+- Support, contribution and governance: [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md)
+
+---
+
 ## Citation
 
 If you use QMCert to validate quantum-chemical calculations, certify stationary points, or calculate quasi-RRHO corrections, please cite:

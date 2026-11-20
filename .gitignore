@@ -63,3 +63,5 @@ validation/benchmark_runs/**/*.property.txt
 validation/benchmark_runs/**/*_trj.xyz
 validation/benchmark_runs/**/Goodvibes_output.dat
 validation/benchmark_runs/**/*.tmp
+# MkDocs build output
+site/

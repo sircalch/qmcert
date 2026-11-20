@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Documentation site with tutorials, an explanation of every check, validation results and API reference: <https://sircalch.github.io/qmcert/>.
+- Worked example `examples/orca_outputs_to_report.py` (six real ORCA calculations: minima, a radical, a triplet, a transition state and an unconverged job), with a walkthrough in the documentation.
+- Support and governance statement in `CONTRIBUTING.md`, linked from the README and the documentation.
+
+### Fixed
+- The synthetic `sample_orca_calc.out` (and its generator `examples/generate_sample_outputs.py`) wrote `SCF CONVERGED AFTER 12 ITERATIONS`, which real ORCA never prints (it prints `CYCLES`), so `qmcert assess -i sample_orca_calc.out` reported a failed SCF. The sample now uses the real wording and is certified as expected.
+
 ## 1.2.0 (2026-09-30)
 
 Benchmark on 59 ORCA 6.1.1 calculations (B3LYP-D3BJ/def2-SVP: minima, radicals and triplets,
