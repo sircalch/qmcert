@@ -3,7 +3,7 @@ QMCert: Automated Quality-Control, Stationary Point Certification, and Reproduci
 Assessment for Quantum-Chemical Calculations.
 """
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 __author__ = "Andrés Monreal-Hernández"
 __license__ = "MIT"
 
