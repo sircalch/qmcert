@@ -133,10 +133,10 @@ If you use QMCert to validate quantum-chemical calculations, certify stationary 
 
 ```bibtex
 @software{monreal2026qmcert,
-  author = {Monreal-Hern{\'a}ndez, Andr{\'e}s},
+  author = {Monreal-Hernández, Andrés},
   title = {{QMCert: Automated Quality-Control, Stationary Point Certification, and Reproducibility Assessment for Quantum-Chemical Calculations}},
   year = {2026},
-  version = {1.3.0},
+  version = {1.3.1},
   publisher = {Zenodo},
   doi = {10.5281/zenodo.22217572},
   url = {https://github.com/sircalch/qmcert}
